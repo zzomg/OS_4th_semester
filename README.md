@@ -1,2 +1,2 @@
-# Parallels_4th_semester
-OPP tasks
+# OS_4th_semester
+Operating systems tasks
