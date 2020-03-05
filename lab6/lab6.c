@@ -5,7 +5,7 @@
 #include <fcntl.h> 
 #include <sys/poll.h>
 
-#define TIMEOUT 5
+#define TIMEOUT 5 //n of sec to wait
 
 struct newLines
 {
@@ -17,12 +17,15 @@ struct newLines
 int main()
 {
 	int file = open("input.txt", O_RDONLY);
+	if(file < 0) {
+		perror("File opening failed\n");
+		return -1;
+	}
 
 	struct pollfd fds[1];
 
 	int ret;
 	char buf;
-	int offset = 0;
 	int line_n = -1;
 
 	struct newLines lines[1024];
@@ -37,14 +40,16 @@ int main()
 	fds[0].fd = 0;
 	fds[0].events = POLLIN;
 
-	ret = poll(fds, 1, TIMEOUT * 1000);
-	scanf("%d", &line_n);
+	while((ret = poll(fds, 1, TIMEOUT * 1000))) {
+	    if(scanf("%d", &line_n)) break;
+    }
 
 	if (ret == -1) {
 		perror("Error: poll\n");
-		return EXIT_FAILURE;
+		return -1;
 	}
 	else if (ret == 0) {
+		printf("Sorry, %d seconds expired. Please, try again\n", TIMEOUT);
 		system("cat input.txt");
 		return 0;
 	}
@@ -65,6 +70,7 @@ int main()
 		}
 	}
 
+	int offset = 0;
 	/*getting line length*/
 	for (int i = 0; i < 1024 && lines[i].line_offset != -1; ++i) {
 		lines[i].line_len = lines[i].line_offset - offset - 1;
@@ -79,7 +85,8 @@ int main()
 
 	if (line_n > num_of_lines) {
 		perror("Error : Line number out of range\n");
-		return EXIT_FAILURE;
+		close(file);
+		return -1;
 	}
 
 	/*for (int i = 0; i < 1024 && lines[i].line_offset != -1; ++i) {
