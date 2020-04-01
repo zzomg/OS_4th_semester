@@ -22,7 +22,7 @@ int main()
     char* question = "Answer this question? [y / n] ";
     char answ;
     int fd;
-    struct termios tty;
+    struct termios tty, savtty;
 
     fd = open("/dev/tty", O_RDONLY);
     if(fd < 0) {
@@ -39,25 +39,29 @@ int main()
         fprintf(stderr, "Error : stdout is not a terminal\n");
         return EXIT_FAILURE;
     }
+    savtty = tty;
 
     tty.c_lflag &= ~ICANON;
     tty.c_cc[VMIN] = 1;
 
     tcsetattr(fd, TCSAFLUSH, &tty);
+
     setbuf(stdout, (char*)NULL);
     printf("%s", question);
     
     for (int i = 0; i < MAX_ANSW_LEN; ++i) {
         read(fd, &answ, 1);
-        if (answ == 121) {
-            printf("\nYou answered this question\n");
-        } else if (answ == 110) {
-            printf("\nYou didn't answer this question\n");
+        printf("\n");
+        if (answ == 'y') {
+            printf("You answered this question\n");
+        } else if (answ == 'n') {
+            printf("You didn't answer this question\n");
         } else {
-            printf("\nUnrecognized answer\n");
+            printf("Unrecognized answer\n");
         }
     }
 
+    tcsetattr(fd, TCSAFLUSH, &savtty);
     close(fd);
     return 0;
 }
