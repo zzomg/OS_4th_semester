@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <string.h>
 
-#define TIMEOUT 5 //n of sec to wait
+#define TIMEOUT 5 // n sec to wait
 
 struct newLines
 {
