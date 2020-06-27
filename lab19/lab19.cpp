@@ -18,14 +18,13 @@ void lookUpPattern(string pattern)
 
     map<string, int> matches;
     map<string, int> entries;
-    // string = name, int = seek_pos
 
     if ((dir = opendir(".")) == NULL) {
         perror("Couldn't open '.'");
         return;
     }
 
-    // read up all files in the current directory 
+    // read up all files in the current directory
     dirp = readdir(dir);
     while (dirp != NULL)
     {
@@ -33,13 +32,6 @@ void lookUpPattern(string pattern)
         dirp = readdir(dir);
     }
 
-    // cout << "-----------------------------" << endl;
-    // for(auto entry : entries)
-    // {
-    //     cout << "Entry: "<< entry.first << endl;
-    //     cout << "Seek_pos: " << entry.second << endl;
-    // }
-    
     bool star = false;
     char c;
     int pattern_len = pattern.length();
@@ -50,9 +42,6 @@ void lookUpPattern(string pattern)
         int seek_pos;
 
         c = pattern[i];
-        // cout << "-----------------------------" << endl;
-        // cout << "pattern:" << c << endl;
-        // cout << "Star: " << star << endl;
 
         switch (c)
         {
@@ -75,13 +64,13 @@ void lookUpPattern(string pattern)
 
                 if (i == pattern_len - 1)
                 {
-                    if (word.length() == seek_pos + 1) 
+                    if (word.length() == seek_pos + 1)
                     {
                         matches[word] = 0;
                         // just end it here, we no longer need seeking position
                     }
                 }
-                else 
+                else
                 {
                     if (word.length() > seek_pos)
                     {
@@ -94,16 +83,16 @@ void lookUpPattern(string pattern)
             break;
 
         default:
-            for (auto& entry : entries) 
+            for (auto& entry : entries)
             {
                 word = entry.first;
                 seek_pos = entry.second;
 
-                if (star) 
+                if (star)
                 {
                    int found;
 
-                    for (found = seek_pos; found < word.length(); ++found) 
+                    for (found = seek_pos; found < word.length(); ++found)
                     {
                         if (word[found] == c)
                         {
@@ -111,7 +100,7 @@ void lookUpPattern(string pattern)
                         }
                     }
 
-                    if (found < word.length()) 
+                    if (found < word.length())
                     {
                         matches[word] = found + 1; // new seek_pos
                     }
@@ -124,9 +113,9 @@ void lookUpPattern(string pattern)
                         {
                             matches[word] = seek_pos + 1;
                         }
-                        
+
                     }
-                    else 
+                    else
                     {
                         if(word[seek_pos] == c )
                         {
@@ -145,12 +134,6 @@ void lookUpPattern(string pattern)
             entries[match.first] = match.second;
         }
         matches.clear();
-
-        // for(auto entry : entries)
-        // {
-        //     cout << "Entry: "<< entry.first << endl;
-        //     cout << "Seek_pos: " << entry.second << endl;
-        // }
     }
 
     cout << "Matches found:" << endl;
