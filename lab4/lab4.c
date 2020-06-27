@@ -46,11 +46,11 @@ void empty_str(char* str)
 int main()
 {
     char raw_str[2048];
-    char* str;
+    char* str = NULL;
     Node *_list = NULL;
 
     fgets(raw_str, 2048, stdin);
-    while(strncmp(raw_str, ".", 1) != 0) {
+    while(strcmp(raw_str, ".\n") != 0) {
         str = (char*)malloc((strlen(raw_str)+1)*sizeof(char));
         strcpy(str, raw_str);
         _list = insert_bottom(str, _list);
